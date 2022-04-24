@@ -1,30 +1,34 @@
 import json
 import os
-
+import time
 import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-import time
 from selenium.webdriver.common.by import By
 
+
 Alphabetarr = ['A', 'B','C','D','E', 'F','G', 'H', 'I', 'J', 'K', 'L','M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
 for letter in Alphabetarr:
+    
     Itemcount = 0
     link = 'https://luenersv-judo.de/index.php/vereinsinfo/wissenswertes/woerterbuch/' + letter + '?start='\
            + str(Itemcount)
-
     driver = webdriver.Chrome(executable_path='C:\\Users\\teraf\\chromedriver_win32\\chromedriver.exe')
     driver.get(link)
     GridItems = driver.find_elements(by=By.CLASS_NAME, value='span4')
     filename = "C:\\Users\\teraf\\OneDrive\\Desktop\\Judo Begriff Lexikon\\" + letter + ".json"
     FileStart = {"Metadata_" + letter: []}
     RunningThroughChar = True
+    
     with open(filename, 'w', encoding='utf-8') as file:
         json.dump(FileStart, file, indent=0)
+        
     while RunningThroughChar:
         if len(GridItems) == 0:
             RunningThroughChar = False
             driver.close()
+            
         for Item in GridItems:
             Itemcount += 1
             Title_Item = Item.find_element_by_class_name('title')
@@ -39,7 +43,7 @@ for letter in Alphabetarr:
                         ZuSchreibenderText = Element.find_element_by_tag_name('a').get_attribute('innerHTML')
                     ZuErsetzenderText = '<span>' + Element.get_attribute('innerHTML') + '</span>'
                     Text_Text = Text_Text.replace(ZuErsetzenderText, ZuSchreibenderText,1)
-
+                    
             Text_Text = Text_Text.replace('<p>', '').replace('</p>', '').replace('<br>', ' ')
             Text_Text = Text_Text.replace('ö', 'oe').replace('ü', 'ue').replace('ä', 'ae')
 
@@ -47,9 +51,6 @@ for letter in Alphabetarr:
                 "Japanese" : Title_Text,
                 "German" : Text_Text
             }
-            print(Title_Text)
-            print(Text_Text)
-
             with open(filename, 'r+', encoding='utf-8') as file:
                 # First we load existing data into a dict.
                 file_data = json.load(file)
@@ -59,7 +60,6 @@ for letter in Alphabetarr:
                 file.seek(0)
                 # convert back to json.
                 json.dump(file_data, file, indent=0)
-
             if Itemcount % 15 == 0 and len(GridItems) == 15:
                 link = 'https://luenersv-judo.de/index.php/vereinsinfo/wissenswertes/woerterbuch/' + letter + '?start='\
                        + str(Itemcount)
@@ -68,9 +68,5 @@ for letter in Alphabetarr:
             if len(GridItems) < 15 and len(GridItems) == Itemcount % 15:
                 RunningThroughChar = False
                 driver.close()
-
-
-
-
 
 
