@@ -1,11 +1,6 @@
 import json
-import os
-import time
-import selenium
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-
 
 Alphabetarr = ['A', 'B','C','D','E', 'F','G', 'H', 'I', 'J', 'K', 'L','M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
@@ -21,8 +16,8 @@ for letter in Alphabetarr:
     FileStart = {"Metadata_" + letter: []}
     RunningThroughChar = True
     
-    with open(filename, 'w', encoding='utf-8') as file:
-        json.dump(FileStart, file, indent=0)
+    with open(filename, 'w', encoding='utf8') as file:
+        json.dump(FileStart, file, indent=4, ensure_ascii=False)
         
     while RunningThroughChar:
         if len(GridItems) == 0:
@@ -45,21 +40,21 @@ for letter in Alphabetarr:
                     Text_Text = Text_Text.replace(ZuErsetzenderText, ZuSchreibenderText,1)
                     
             Text_Text = Text_Text.replace('<p>', '').replace('</p>', '').replace('<br>', ' ')
-            Text_Text = Text_Text.replace('ö', 'oe').replace('ü', 'ue').replace('ä', 'ae')
 
             JSON = {
-                "Japanese" : Title_Text,
-                "German" : Text_Text
+                Title_Text : [{
+                    "German" : Text_Text}
+                ]
             }
-            with open(filename, 'r+', encoding='utf-8') as file:
+            with open(filename, 'r+', encoding='utf8') as file:
                 # First we load existing data into a dict.
                 file_data = json.load(file)
                 # Join new_data with file_data inside emp_details
-                file_data["German"].append(JSON)
+                file_data["Metadata_" + letter].append(JSON)
                 # Sets file's current position at offset.
                 file.seek(0)
                 # convert back to json.
-                json.dump(file_data, file, indent=0)
+                json.dump(file_data, file, indent=4, ensure_ascii=False)
             if Itemcount % 15 == 0 and len(GridItems) == 15:
                 link = 'https://luenersv-judo.de/index.php/vereinsinfo/wissenswertes/woerterbuch/' + letter + '?start='\
                        + str(Itemcount)
