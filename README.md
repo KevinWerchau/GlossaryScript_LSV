@@ -1,2 +1,2 @@
-# GlossaryScript_LSV
-Simple Script to Read out a Glossary containing arround 500 words. 
+# Seo Glossary
+Script to Read out the Joomla SEO Glossary Component if you dont have admnistrator access
